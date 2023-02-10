@@ -12,7 +12,7 @@ airline_data =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.
                                    'Div2Airport': str, 'Div2TailNum': str})
 
 data = airline_data.sample(n=700, random_state=42)
-fig = px.pie(data,values='Flights',names='DistanceGroup',title='Distance Group Proportion by Flight')
+fig = px.pie(data,values='Flights',names='DistanceGroup',title='Distances Group Proportion by Flight')
 
 # Create an app
 app = dash.Dash(__name__)
@@ -32,6 +32,7 @@ app.layout=html.Div(
                 ],style={'textAlign': 'center', 'color': '#503D36', 'font-size':40},),
                 html.Br(),
                 html.Div(dcc.Graph(id='bar-plot')),
+
 
 
             ])
