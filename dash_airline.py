@@ -155,8 +155,6 @@ app.layout = html.Div(children=[
                              State("plot5", "children")
                              ])
 # Add computation to callback function and return graph
-
-
 def get_graph(chart, year, children1, children2, c3, c4, c5):
     # Select data
     df = airline_data[airline_data['Year'] == int(year)]
