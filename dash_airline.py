@@ -4,14 +4,14 @@ import dash
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
-from jupyter_dash import JupyterDash
+# from jupyter_dash import JupyterDash
 import plotly.graph_objects as go
 import plotly.express as px
 from dash import no_update
 
 # Create a dash application
-app = JupyterDash(__name__)
-JupyterDash.infer_jupyter_proxy_config()
+app = dash.Dash(__name__)
+# JupyterDash.infer_jupyter_proxy_config()
 
 # REVIEW1: Clear the layout and do not display exception till callback gets executed
 app.config.suppress_callback_exceptions = True
@@ -78,97 +78,92 @@ def compute_data_choice_2(df):
 # Application layout
 app.layout = html.Div(children=[
     # TODO1: Add title to the dashboard
-    html.H1("US Domestic Airline Flights Performance", style={'textAlign': 'center', color':'
-                                                              # 503D36','font_size':24}),
-                                                              # REVIEW2: Dropdown creation
-                                                              # Create an outer division
-                                                              html.Div([
-                                                                  # Add an division
-                                                                  html.Div([
-                                                                      # Create an division for adding dropdown helper text for report type
-                                                                      html.Div(
-                                                                          [
-                                                                              html.H2('Report Type:',
-                                                                                      style={'margin-right': '2em'}),
-                                                                          ]
-                                                                      ),
-                                                                      # TODO2: Add a dropdown
-                                                                      dcc.Dropdown(id='input-type',
-                                                                                   options=[{
-                                                                                                'label': 'Yearly Airline Performance Report',
-                                                                                                'value': 'OTP1'},
-                                                                                            {
-                                                                                                'label': 'Yearly Airline Delay Report',
-                                                                                                'value': 'OTP2'}],
-                                                                                   placeholder='Select a report type',
-                                                                                   style={'tectAlign': 'center',
-                                                                                          'width': '80%',
-                                                                                          'padding': '3px',
-                                                                                          'font_size': '20px'})
+    html.H1("US Domestic Airline Flights Performance", style={'textAlign': 'center', 'font_size': 24}),
+    # REVIEW2: Dropdown creation
+    # Create an outer division
+    html.Div([
+        # Add an division
+        html.Div([
+            # Create an division for adding dropdown helper text for report type
+            html.Div(
+                [
+                    html.H2('Report Type:', style={'margin-right': '2em'}),
+                ]
+            ),
+            # TODO2: Add a dropdown
+            dcc.Dropdown(id='input-type',
+                         options=[{'label': 'Yearly Airline Performance Report', 'value': 'OTP1'},
+                                  {'label': 'Yearly Airline Delay Report', 'value': 'OTP2'}],
+                         placeholder='Select a report type',
+                         style={'textAlign': 'left', 'width': '80%', 'padding': '3px', 'font_size': '20px'}),
+            # Place them next to each other using the division style
+        ], style={'display': 'flex'}),
 
-                                                                      # Place them next to each other using the division style
-                                                                  ], style={'display': 'flex'}),
+        # Add next division
+        html.Div([
+            # Create an division for adding dropdown helper text for choosing year
+            html.Div(
+                [
+                    html.H2('Choose Year:', style={'margin-right': '2em'})
+                ]
+            ),
+            dcc.Dropdown(id='input-year',
+                         # Update dropdown values using list comphrehension
+                         options=[{'label': i, 'value': i} for i in year_list],
+                         placeholder="Select a year",
+                         style={'width': '80%', 'padding': '3px', 'font-size': '20px', 'text-align-last': 'center'}),
+            # Place them next to each other using the division style
+        ], style={'display': 'flex'}),
+    ]),
 
-                                                                  # Add next division
-                                                                  html.Div([
-                                                                      # Create an division for adding dropdown helper text for choosing year
-                                                                      html.Div(
-                                                                          [
-                                                                              html.H2('Choose Year:',
-                                                                                      style={'margin-right': '2em'})
-                                                                          ]
-                                                                      ),
-                                                                      dcc.Dropdown(id='input-year',
-                                                                                   # Update dropdown values using list comphrehension
-                                                                                   options=[{'label': i, 'value': i} for
-                                                                                            i in year_list],
-                                                                                   placeholder="Select a year",
-                                                                                   style={'width': '80%',
-                                                                                          'padding': '3px',
-                                                                                          'font-size': '20px',
-                                                                                          'text-align-last': 'center'}),
-                                                                      # Place them next to each other using the division style
-                                                                  ], style={'display': 'flex'}),
-                                                              ]),
+    # Add Computed graphs
+    # REVIEW3: Observe how we add an empty division and providing an id that will be updated during callback
+    html.Div([], id='plot1'),
 
-            # Add Computed graphs
-            # REVIEW3: Observe how we add an empty division and providing an id that will be updated during callback
-            html.Div([], id='plot1'),
-
-            html.Div([
-                html.Div([], id='plot2'),
-                html.Div([], id='plot3')
-            ], style={'display': 'flex'}),
-
+    html.Div([
+        html.Div([], id='plot2'),
+        html.Div([], id='plot3')
+    ], style={'display': 'flex'}),
+    html.Div([
+        html.Div([], id='plot4'),
+        html.Div([], id='plot5')
+    ], style={'display': 'flex'})
     # TODO3: Add a division with two empty divisions inside. See above disvision for example.
 
 ])
 
-             # Callback function definition
-             # TODO4: Add 5 ouput components
-             @ app.callback([....],
-                            [Input(component_id='input-type', component_property='value'),
-                             Input(component_id='input-year', component_property='value')],
-                            # REVIEW4: Holding output state till user enters all the form information. In this case, it will be chart type and year
-                            [State("plot1", 'children'), State("plot2", "children"),
-                             State("plot3", "children"), State("plot4", "children"),
-                             State("plot5", "children")
-                             ])
+
+# Callback function definition
+# TODO4: Add 5 ouput components
+@app.callback([Output(component_id='plot1', component_property='children'),
+               Output(component_id='plot2', component_property='children'),
+               Output(component_id='plot3', component_property='children'),
+               Output(component_id='plot4', component_property='children'),
+               Output(component_id='plot5', component_property='children')],
+              [Input(component_id='input-type', component_property='value'),
+               Input(component_id='input-year', component_property='value')],
+              # REVIEW4: Holding output state till user enters all the form information. In this case, it will be chart type and year
+              [State("plot1", 'children'), State("plot2", "children"),
+               State("plot3", "children"), State("plot4", "children"),
+               State("plot5", "children")
+               ])
 # Add computation to callback function and return graph
 def get_graph(chart, year, children1, children2, c3, c4, c5):
     # Select data
-    df = airline_data[airline_data['Year'] == int(year)]
 
-    if chart == 'OPT1':
+    df = airline_data[airline_data['Year'] == year]
+    print(chart)
+    if chart == "OTP1":
         # Compute required information for creating graph from the data
         bar_data, line_data, div_data, map_data, tree_data = compute_data_choice_1(df)
-
+        print(bar_data.head(5))
         # Number of flights under different cancellation categories
         bar_fig = px.bar(bar_data, x='Month', y='Flights', color='CancellationCode',
                          title='Monthly Flight Cancellation')
 
         # TODO5: Average flight time by reporting airline
-
+        line_fig = px.line(line_data, 'Month', y='AirTime', color='Reporting_Airline',
+                           title='Average carrrier delay time (minutes) by airline')
         # Percentage of diverted airport landings per reporting airline
         pie_fig = px.pie(div_data, values='Flights', names='Reporting_Airline',
                          title='% of flights by reporting airline')
@@ -186,7 +181,12 @@ def get_graph(chart, year, children1, children2, c3, c4, c5):
             geo_scope='usa')  # Plot only the USA instead of globe
 
         # TODO6: Number of flights flying to each state from each reporting airline
-
+        tree_fig = px.treemap(tree_data, path=['DestState', 'Reporting_Airline'],
+                              values='Flights',
+                              color='Flights',
+                              color_continuous_scale='RdBu',
+                              title='Fight count by airline to destination state'
+                              )
         # REVIEW6: Return dcc.Graph component to the empty division
         return [dcc.Graph(figure=tree_fig),
                 dcc.Graph(figure=pie_fig),
@@ -221,4 +221,4 @@ def get_graph(chart, year, children1, children2, c3, c4, c5):
 # Run the app
 if __name__ == '__main__':
     # REVIEW8: Adding dev_tools_ui=False, dev_tools_props_check=False can prevent error appearing before calling callback function
-    app.run_server(mode="inline", host="localhost", debug=False, dev_tools_ui=False, dev_tools_props_check=False)
+    app.run_server(port=8002, host='127.0.0.1', debug=True)
