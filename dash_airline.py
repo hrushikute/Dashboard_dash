@@ -1,4 +1,4 @@
-# Dashboard for Airlines.
+# Dashboard for Airlines..
 # Import required libraries
 import pandas as pd
 import dash
@@ -96,7 +96,7 @@ app.layout = html.Div(children=[
                          options=[{'label': 'Yearly Airline Performance Report', 'value': 'OTP1'},
                                   {'label': 'Yearly Airline Delay Report', 'value': 'OTP2'}],
                          placeholder='Select a report type',
-                         style={'textAlign': 'left', 'width': '80%', 'padding': '3px', 'font_size': '20px'}),
+                         style={'text-align-last': 'center', 'width': '80%', 'padding': '3px', 'font_size': '20px'}),
             # Place them next to each other using the division style
         ], style={'display': 'flex'}),
 
